@@ -146,7 +146,7 @@ if last_updated_choice == True:
     last_updated_size = last_updated_font.getsize(last_updated_text)
     draw.text((width - last_updated_size[0], height - last_updated_size[1]),last_updated_text, text_colour,last_updated_font)
 
-## PAST IMAGE ONTO LARGER IMAGE
+## PASTE IMAGE ONTO LARGER IMAGE
 image.paste(d_image, (b_left, b_top))
 
 if check_calibration_choice == True:
@@ -155,6 +155,11 @@ if check_calibration_choice == True:
     box_draw.line(((b_right,b_top),(b_right,b_bottom)),'black', width = 3)
     box_draw.line(((b_left,b_top),(b_right,b_top)),'black', width = 3)
     box_draw.line(((b_left,b_bottom),(b_right,b_bottom)),'black', width = 3)
+    
+    box_draw.line(((0,0),(0,display_height)),'black', width = 3)
+    box_draw.line(((display_width,0),(display_width,display_height)),'black', width = 3)
+    box_draw.line(((0,0),(display_width,0)),'black', width = 3)
+    box_draw.line(((0,display_height),(display_width,display_height)),'black', width = 3)
 
 ## SAVE TO FILE
 image.save('/home/pi/test.png')
