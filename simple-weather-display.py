@@ -11,16 +11,16 @@ display_width, display_height = driver.EPD_WIDTH, driver.EPD_HEIGHT
 
 image = Image.new('RGB', (display_width, display_height), background_colour)
 
-## DEFINE THE BOUNDS OF THE CURRENT CONFIG
+## DEFINE THE BOUNDS OF THE CURRENT CONFIG, imported from settings.py
 b_left = left_edge
 b_right = right_edge
 b_top = top_edge
 b_bottom = bottom_edge
 
-width = int(b_right - b_left)
+width = int(b_right - b_left) # this width and height is the width and height of inside the picture frame mat
 height = int(b_bottom - b_top)
 
-d_image = Image.new('RGB', (width, height), background_colour)
+d_image = Image.new('RGB', (width, height), background_colour) # creating a smaller image, based on the inside of the mat
 draw = ImageDraw.Draw(d_image)
 
 ## DEFINE FONTS
@@ -40,10 +40,6 @@ curr_temp = weather['currently']['temperature']
 icon = weather['currently']['icon']
 hi = weather['daily']['data'][0]['temperatureHigh']
 lo = weather['daily']['data'][0]['temperatureLow']
-today_desc = weather['daily']['data'][0]['summary']
-tom_desc = weather['daily']['data'][1]['summary']
-tom_hi = weather['daily']['data'][1]['temperatureHigh']
-tom_lo = weather['daily']['data'][1]['temperatureLow']
 
 ## GET DATE INFO ##
 import datetime
@@ -58,7 +54,6 @@ else:
     end = "th"
 now_string = datetime.datetime.now().strftime('%A, %B %d')+end
 
-# display_text = ["", 'Today is Thursday, June 18th', '', 'High of 80dF, low of 66dF', ""]
 display_text = ["", 
                 'Today is '+now_string, 
                 "", 
@@ -67,6 +62,7 @@ display_text = ["",
 
 allowed_width = int(width*0.8)
 
+## GET FONT SIZE ##
 font_size = 20
 max_size = 0
 while max_size <= allowed_width:
@@ -76,11 +72,12 @@ while max_size <= allowed_width:
         if cs[0] > max_size:
             max_size = cs[0]
     font_size = font_size + 2
-
 font = ImageFont.truetype(regular_font_path, font_size)
+
 
 line_height = int(height/len(display_text))
 
+## DRAW THE TEXT TO DISPLAY ##
 for line in range(0,len(display_text)):
     x = int((width - font.getsize(display_text[line])[0])/2)
     font_height = font.getsize(display_text[line])[1]
@@ -97,37 +94,41 @@ iconmap =   {
             'thunderstorm':'\uf01e',            'tornado':'\uf056',
             'other':'\uf053'
             }
-
 try:
     icon_text = iconmap[icon]
 except:
     icon_text = iconmap['other']
-# icon_text = iconmap['clear-day']
+temp_text = str(round(curr_temp))+"°F" 
 
-temp_text = str(round(curr_temp))+"°F"
-
+### FIND ICON FONT SIZE ###
 icon_font = 40
 size = ImageFont.truetype(weather_font_path, icon_font).getsize(icon_text)[1]
 while size < line_height*0.8:
     size = ImageFont.truetype(weather_font_path, icon_font).getsize(icon_text)[1]
     icon_font = icon_font + 2
 
+### FIND TEMP FONT SIZE ###
 temp_font = 40
 size = ImageFont.truetype(regular_font_path, temp_font).getsize(temp_text)[1]
 while size < line_height*0.8:
     size = ImageFont.truetype(regular_font_path, temp_font).getsize(temp_text)[1]
     temp_font = temp_font + 2
-
 weather_font = ImageFont.truetype(weather_font_path, icon_font)
 weather_size = weather_font.getsize(icon_text)
 
-
-# temp_text = "80°F"
 temp_font_font = ImageFont.truetype(regular_font_path, temp_font)
 temp_size = temp_font_font.getsize(temp_text)
 
-gap_width = 10
 
+## DOING A BUNCH OF CALCULATIONS FOR THE CENTER ICON AND TEMP TEXT
+"""
+The center line was stupid complicated. I had to combine the icon (which is in the
+weather font) with the temperature (which is in the regular font).
+
+I took the sizes of the icon and the temp text and added a gap between them and then
+centered them as best I could.
+"""
+gap_width = 10 
 weather_start = int((width - (weather_size[0]+gap_width+temp_size[0]))/2)
 temp_start = weather_start + weather_size[0] + gap_width
 
@@ -138,6 +139,7 @@ size_correction = 5
 draw.text((weather_start, line3start + int((line_height - weather_size[1])/2)+weather_correction-size_correction),icon_text, text_colour, font = weather_font)
 draw.text((temp_start, line3start + int((line_height - temp_size[1])/2)-size_correction),temp_text, text_colour, font = temp_font_font)
 
+## Add a last updated line, if requested
 if last_updated_choice == True:
     last_updated_font_size = 14
     nowtext = datetime.datetime.now().strftime("%Y-%m%-d %H:%M")
@@ -146,9 +148,10 @@ if last_updated_choice == True:
     last_updated_size = last_updated_font.getsize(last_updated_text)
     draw.text((width - last_updated_size[0], height - last_updated_size[1]),last_updated_text, text_colour,last_updated_font)
 
-## PASTE IMAGE ONTO LARGER IMAGE
+## PASTE THE SMALLER INSIDE IMAGE ONTO THE FULL SCREEN
 image.paste(d_image, (b_left, b_top))
 
+## Draw the calibration boxes (to check numbers) onto full screen, if requested
 if check_calibration_choice == True:
     box_draw = ImageDraw.Draw(image)
     box_draw.line(((b_left,b_top),(b_left,b_bottom)),'black', width = 3)
@@ -164,7 +167,7 @@ if check_calibration_choice == True:
 ## SAVE TO FILE
 image.save('/home/pi/test.png')
 
-## PRINT ONTO IMAGE
+## PRINT ONTO SCREEN
 epaper = driver.EPD()
 print('Initialising E-Paper...', end = '')
 epaper.init()
