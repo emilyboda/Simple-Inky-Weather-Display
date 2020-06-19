@@ -24,7 +24,7 @@ d_image = Image.new('RGB', (width, height), background_colour)
 draw = ImageDraw.Draw(d_image)
 
 ## DEFINE FONTS
-regular_font_path = '/home/pi/simple-weather/fonts/NotoMono/NotoMono-Regular.ttf'
+regular_font_path = '/home/pi/simple-weather/fonts/NotoSansCJK/NotoSansCJKsc-Regular.otf'
 weather_font_path = '/home/pi/simple-weather/fonts/WeatherFont/weathericons-regular-webfont.ttf'
 font = ImageFont.truetype(regular_font_path, 20)
 
@@ -138,9 +138,23 @@ size_correction = 5
 draw.text((weather_start, line3start + int((line_height - weather_size[1])/2)+weather_correction-size_correction),icon_text, text_colour, font = weather_font)
 draw.text((temp_start, line3start + int((line_height - temp_size[1])/2)-size_correction),temp_text, text_colour, font = temp_font_font)
 
+if last_updated_choice == True:
+    last_updated_font_size = 14
+    nowtext = datetime.datetime.now().strftime("%Y-%m%-d %H:%M")
+    last_updated_text = "Last updated at "+nowtext
+    last_updated_font = ImageFont.truetype(regular_font_path, last_updated_font_size)
+    last_updated_size = last_updated_font.getsize(last_updated_text)
+    draw.text((width - last_updated_size[0], height - last_updated_size[1]),last_updated_text, text_colour,last_updated_font)
 
 ## PAST IMAGE ONTO LARGER IMAGE
 image.paste(d_image, (b_left, b_top))
+
+if check_calibration_choice == True:
+    box_draw = ImageDraw.Draw(image)
+    box_draw.line(((b_left,b_top),(b_left,b_bottom)),'black', width = 3)
+    box_draw.line(((b_right,b_top),(b_right,b_bottom)),'black', width = 3)
+    box_draw.line(((b_left,b_top),(b_right,b_top)),'black', width = 3)
+    box_draw.line(((b_left,b_bottom),(b_right,b_bottom)),'black', width = 3)
 
 ## SAVE TO FILE
 image.save('/home/pi/test.png')
@@ -156,5 +170,3 @@ print('Sending image data and refreshing display...', end='')
 epaper.display(epaper.getbuffer(image))
 print('Done')
 epaper.sleep()
-
-
