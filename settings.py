@@ -35,3 +35,6 @@ top_edge = 46
 right_edge =  579
 bottom_edge = 375
 
+#### OTHER MISC. SETTINGS
+last_updated_choice = False      # if you want to display a "last updated" timestamp at the bottom right
+check_calibration_choice = False # if you want to display a box that shows your calibration bounds
