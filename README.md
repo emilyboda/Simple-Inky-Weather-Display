@@ -6,17 +6,22 @@ Also, this project uses the Dark Sky weather API. You must already have a Dark S
 ## What makes this project different from all the other Inky projects?
 The biggest difference is that I have allowed the user to use a picture frame mat that is smaller than the screen itself. The 7.5 inch screen is an unusual size and I have yet to find an off-the-shelf frame that fits this display. As a result, many users cut their own mats. This looks pretty awful. I created a calibration file that allows the user to say "15 pixels are cut off on the left", and "20 pixels are cut off on the top", etc. The display program takes into account that smaller sized area and centers the display on the actual area shown.
 
-My code isn't perfect, but please incorporate it into your own projects and build on it.
+See the image below. The outer box is the actual full display, and the inner box represents the image that you can see under the mat. The mat cuts off the outer edges. If I centered the weather display on the outer box, it would not be centered when looking at it in the picture frame.
 
-## Installation Instructions:
-1. Clone this repo with:
-**`git clone https://github.com/emilyboda/simple-inky-weather-display simple-weather`**
-2. Follow the instructions in the settings.py file
+## Display Raw Saved Image
+<p align="center">
+<img src="https://github.com/emilyboda/simple-inky-weather-display/blob/master/raw_image_calibration.png" width="900"><img 
+</p>
 
 ## Display In Use
 <p align="center">
 <img src="https://github.com/emilyboda/simple-inky-weather-display/blob/master/display_in_the_wild.jpg" width="900"><img 
 </p>
+
+## Installation Instructions:
+1. Clone this repo with:
+**`git clone https://github.com/emilyboda/simple-inky-weather-display simple-weather`**
+2. Follow the instructions in the settings.py file
 
 ## Calibration Example
 Each small line represents 5 pixels. The text "50" is telling you that the point (50, 50) is where the two dark lines cross to the top left of the text.
