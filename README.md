@@ -11,9 +11,14 @@ My code isn't perfect, but please incorporate it into your own projects and buil
 git clone https://github.com/emilyboda/simple-inky-weather-display simple-weather
 2. Follow the instructions in the settings.py file
 
-## Preview
+## Display In Use
 <p align="center">
 <img src="https://github.com/emilyboda/simple-inky-weather-display/blob/master/display_in_the_wild.jpg" width="900"><img 
+</p>
+
+## Calibration Example
+<p align="center">
+<img src="https://github.com/emilyboda/simple-inky-weather-display/blob/master/example_calibration.jpg" width="900"><img 
 </p>
 
 ## Thanks to:
