@@ -9,7 +9,7 @@ display_width, display_height = driver.EPD_WIDTH, driver.EPD_HEIGHT
 image = Image.new('RGB', (display_width, display_height), 'white')
 draw = ImageDraw.Draw(image)
 
-regular_font_path = '/home/pi/simple-weather/fonts/NotoSansCJK/NotoSansCJKsc-Regular.otf'
+regular_font_path = '/home/pi/simple-weather/fonts/NotoMono/NotoMono-Regular.ttf'
 font = ImageFont.truetype(regular_font_path, 15)
 
 inc = 5
