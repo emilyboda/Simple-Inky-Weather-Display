@@ -22,8 +22,11 @@ My code isn't perfect, but please incorporate it into your own projects and buil
 Each small line represents 5 pixels. The text "50" is telling you that the point (50, 50) is where the two dark lines cross to the top left of the text.
 
 **`top_edge = 30
+
 left_edge = 49
+
 right_edge = 593
+
 bottom_edge = 375`**
 <p align="center">
 <img src="https://github.com/emilyboda/simple-inky-weather-display/blob/master/example_calibration.jpg" width="900"><img 
