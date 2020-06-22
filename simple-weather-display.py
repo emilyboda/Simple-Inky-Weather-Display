@@ -57,7 +57,7 @@ now_string = datetime.datetime.now().strftime('%A, %B %d')+end
 display_text = ["", 
                 'Today is '+now_string, 
                 "", 
-                'High of '+str(round(hi))+'°F, low of '+str(round(lo))+'°F',
+                'High of '+str(round(hi))+'°, low of '+str(round(lo))+'°',
                 ""]
 
 allowed_width = int(width*0.8)
@@ -98,7 +98,7 @@ try:
     icon_text = iconmap[icon]
 except:
     icon_text = iconmap['other']
-temp_text = str(round(curr_temp))+"°F" 
+temp_text = str(round(curr_temp))+"°" 
 
 ### FIND ICON FONT SIZE ###
 icon_font = 40
