@@ -44,11 +44,11 @@ lo = weather['daily']['data'][0]['temperatureLow']
 ## GET DATE INFO ##
 import datetime
 dayy = datetime.datetime.now().strftime('%d')[-1]
-if dayy == 1:
+if dayy == "1":
     end = "st"
-elif dayy == 2:
+elif dayy == "2":
     end = "nd"
-elif dayy == 3:
+elif dayy == "3":
     end = "rd"
 else:
     end = "th"
