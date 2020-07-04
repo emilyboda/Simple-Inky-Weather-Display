@@ -43,16 +43,18 @@ lo = weather['daily']['data'][0]['temperatureLow']
 
 ## GET DATE INFO ##
 import datetime
-dayy = datetime.datetime.now().strftime('%d')[-1]
-if dayy == "1":
+
+dayy = datetime.datetime.now().strftime('%d')
+
+if dayy[-1] == "1" and dayy[0] != "1":
     end = "st"
-elif dayy == "2":
+elif dayy[-1] == "2" and dayy[0] != "1":
     end = "nd"
-elif dayy == "3":
+elif dayy[-1] == "3" and dayy[0] != "1":
     end = "rd"
 else:
     end = "th"
-now_string = datetime.datetime.now().strftime('%A, %B %d')+end
+now_string = datetime.datetime.now().strftime('%A, %B %-d')+end
 
 display_text = ["", 
                 'Today is '+now_string, 
