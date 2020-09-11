@@ -38,3 +38,6 @@ bottom_edge = 375
 #### OTHER MISC. SETTINGS
 last_updated_choice = False      # if you want to display a "last updated" timestamp at the bottom right
 check_calibration_choice = False # if you want to display a box that shows your calibration bounds
+debugging_choice_weather = False  # if you want to skip pulling the weather from the API to save calls for testing
+debugging_choice_screen = False   # if you want to skip showing on the display and only save to file for testing
+
