@@ -3,6 +3,9 @@ This repo is not maintained. Files may not work. You'll have to install the depe
 
 Also, this project uses the Dark Sky weather API. You must already have a Dark Sky API key to use it and the API will stop working in 2021. I used this API because I couldn't find any other free API that gives the "high" and a "low" for the day. Suggestions of other APIs to use are welcome! 
 
+## Update Sept 2020
+I added an option to use this vertically. The vertical version does not have the current temperature, it instead shows the weather icon for the entire day and has a blurb summarizing the weather for the rest of the day, such as "Rain in the morning" or "Humid and muggy all day".
+
 ## What makes this project different from all the other Inky projects?
 The biggest difference is that I have allowed the user to use a picture frame mat that is smaller than the screen itself. The 7.5 inch screen is an unusual size and I have yet to find an off-the-shelf frame that fits this display. As a result, many users cut their own mats. This looks pretty awful. I created a calibration file that allows the user to say "15 pixels are cut off on the left", and "20 pixels are cut off on the top", etc. The display program takes into account that smaller sized area and centers the display on the actual area shown.
 
