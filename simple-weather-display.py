@@ -33,13 +33,22 @@ import requests
 import json
 import math
 
-r = requests.get('https://api.darksky.net/forecast/'+dark_sky_api_key+'/'+dark_sky_coords)
-weather = r.json()
-
-curr_temp = weather['currently']['temperature']
-icon = weather['currently']['icon']
-hi = weather['daily']['data'][0]['temperatureHigh']
-lo = weather['daily']['data'][0]['temperatureLow']
+if debugging_choice_weather == True:
+    icon = 'rain'
+    # icon = 'clear-day'
+    hi = 77.3
+    lo = 68
+    curr_temp = 76
+else:
+    r = requests.get('https://api.darksky.net/forecast/'+dark_sky_api_key+'/'+dark_sky_coords)
+    weather = r.json()
+    weather_file_path = "/home/pi/simple-weather/forecast.json"
+    with open(weather_file_path, 'w') as outfile:
+        json.dump(weather, outfile)
+    curr_temp = weather['currently']['temperature']
+    icon = weather['currently']['icon']
+    hi = weather['daily']['data'][0]['temperatureHigh']
+    lo = weather['daily']['data'][0]['temperatureLow']
 
 ## GET DATE INFO ##
 import datetime
@@ -169,14 +178,15 @@ if check_calibration_choice == True:
 ## SAVE TO FILE
 image.save('/home/pi/test.png')
 
-## PRINT ONTO SCREEN
-epaper = driver.EPD()
-print('Initialising E-Paper...', end = '')
-epaper.init()
-print('Done')
+if debugging_choice_screen == False:
+    ## PRINT ONTO SCREEN
+    epaper = driver.EPD()
+    print('Initialising E-Paper...', end = '')
+    epaper.init()
+    print('Done')
 
-print('Sending image data and refreshing display...', end='')
-# epaper.display(epaper.getbuffer(image), epaper.getbuffer(image_col))
-epaper.display(epaper.getbuffer(image))
-print('Done')
-epaper.sleep()
+    print('Sending image data and refreshing display...', end='')
+    # epaper.display(epaper.getbuffer(image), epaper.getbuffer(image_col))
+    epaper.display(epaper.getbuffer(image))
+    print('Done')
+    epaper.sleep()
