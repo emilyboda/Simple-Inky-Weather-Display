@@ -27,6 +27,7 @@ draw = ImageDraw.Draw(d_image)
 ## DEFINE FONTS
 regular_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-Condensed.ttf'
 summary_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-CondensedItalic.ttf'
+hilo_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-CondensedBold.ttf'
 weather_font_path = '/home/pi/simple-weather/fonts/WeatherFont/weathericons-regular-webfont.ttf'
 font = ImageFont.truetype(regular_font_path, 20)
 
@@ -74,8 +75,7 @@ elif dayy[-1] == "3" and dayy[0] != "1":
     end = "rd"
 else:
     end = "th"
-
-todayis_string = "Today is "+datetime.datetime.now().strftime('%A')
+todayis_string = "Today is "+datetime.datetime.now().strftime('%A')+","
 date_string = datetime.datetime.now().strftime('%B %-d')+end
 hilo_string = 'High of '+str(round(hi))+'°, low of '+str(round(lo))+'°'
 
@@ -84,7 +84,6 @@ summary_string = today_summary.replace(".", "")
 allowed_width = int(width*0.75)
 
 ## GET FONT SIZE ##
-### gets the font size from the strings that are consistently sized
 font_size = 20
 consistent_strings = [todayis_string, date_string, hilo_string]
 max_size = 0
@@ -98,12 +97,12 @@ while max_size <= allowed_width:
 font = ImageFont.truetype(regular_font_path, font_size)
 print(font_size)
 
-
 ## SPLIT FONT INTO TWO LINES IF NECESSARY ##
 # the summary message is frequently too long to fit on one line.
 
-summary_font_size = 20
-summary_font = ImageFont.truetype(summary_font_path, font_size)
+# summary_font = ImageFont.truetype(summary_font_path, font_size)
+summary_font = ImageFont.truetype(regular_font_path, font_size)
+hilo_font = ImageFont.truetype(hilo_font_path, font_size)
 summary_first_size = summary_font.getsize(summary_string)
 
 # test to see if the width of the summary line is larger than the allowed width.
@@ -133,23 +132,84 @@ else:
 
 ### GET WEATHER ICON ###
 iconmap =   {
-            'clear-day':'\uf00d',               'clear-night':'\uf02e',
-            'rain':'\uf019',                    'snow':'\uf01b',
-            'sleet':'\uf0b5',                   'wind':'\uf050',
-            'cloudy':'\uf013',                  'partly-cloudy-day': '\uf002',
-            'partly-cloudy-night': '\uf031',    'hail':'\uf015',
-            'thunderstorm':'\uf01e',            'tornado':'\uf056',
-            'other':'\uf053'
+            'clear-day':
+                {
+                'icon':'\uf00d',
+                'y-correct': 10/60
+                },
+            'clear-night':
+                {
+                'icon':'\uf02e',
+                'y-correct': 51/150
+                },
+            'rain':
+                {
+                'icon':'\uf019',
+                'y-correct': 21/60
+                },
+            'snow':
+                {
+                'icon':'\uf01b',
+                'y-correct': 21/60
+                },
+            'sleet':
+                {
+                'icon':'\uf0b5',
+                'y-correct': 51/150
+                },
+            'wind':
+                {
+                'icon':'\uf050',
+                'y-correct': 25/60
+                },
+            'cloudy':
+                {
+                'icon':'\uf013',
+                'y-correct': 51/150
+                },
+            'partly-cloudy-day': 
+                {
+                'icon':'\uf002',
+                'y-correct': 0
+                },
+            'partly-cloudy-night': 
+                {
+                'icon':'\uf031',
+                'y-correct':29/100
+                },
+            'hail':
+                {
+                'icon':'\uf015',
+                'y-correct': 21/60
+                },
+            'thunderstorm':
+                {
+                'icon':'\uf01e',
+                'y-correct': 52/150
+                },
+            'tornado':
+                {
+                'icon':'\uf056',
+                'y-correct': 51/150
+                },
+            'other':
+                {
+                'icon':'\uf053',
+                'y-correct': 14/150
+                }
             }
 try:
-    icon_text = iconmap[icon]
+    icon_json = iconmap[icon]
 except:
-    icon_text = iconmap['other']
+    icon_json = iconmap['other']
 
 ## DEFINE WHERE TEXT IS TO BE DRAWN
+
 text_to_display = []
 
-line_height = 2
+line_height = 5
+small_gap = 12
+large_gap = 30
 
 # Today is Thursday
 text_to_display = [
@@ -157,8 +217,10 @@ text_to_display = [
         "text": todayis_string,
         "font": font,
         "top": 0,
-        "bottom": 0+font.getsize(todayis_string)[1],
-        "left": int(width/2 - font.getsize(todayis_string)[0]/2)
+        "bottom": 0+font.getsize(todayis_string)[1] - 11,
+        "left": int(width/2 - font.getsize(todayis_string)[0]/2),
+        "size": font.getsize(todayis_string),
+        "ycorrect": 11
     }
 ]
 
@@ -167,23 +229,11 @@ text_to_display.append(
     {
         "text": date_string,
         "font": font,
-        "top": text_to_display[0]["bottom"] + line_height,
-        "bottom": text_to_display[0]["bottom"] + line_height + font.getsize(date_string)[1],
-        "left": int(width/2 - font.getsize(date_string)[0]/2)
-    }
-)
-
-# weather icon
-icon_size = 60
-weather_font = ImageFont.truetype(weather_font_path, icon_size)
-y_correction = 5
-text_to_display.append(
-    {
-        "text": icon_text,
-        "font": weather_font,
-        "top": text_to_display[1]["bottom"] + line_height - y_correction,
-        "bottom": text_to_display[1]["bottom"] + line_height - y_correction + weather_font.getsize(icon_text)[1],
-        "left": int(width/2 - weather_font.getsize(icon_text)[0]/2)
+        "top": text_to_display[0]["bottom"] + small_gap,
+        "bottom": text_to_display[0]["bottom"] + small_gap + font.getsize(date_string)[1] - 11,
+        "left": int(width/2 - font.getsize(date_string)[0]/2),
+        "size": font.getsize(date_string),
+        "ycorrect": 11
     }
 )
 
@@ -191,10 +241,27 @@ text_to_display.append(
 text_to_display.append(
     {
         "text": hilo_string,
-        "font": font,
-        "top": text_to_display[2]["bottom"] + line_height,
-        "bottom": text_to_display[2]["bottom"] + line_height + font.getsize(hilo_string)[1],
-        "left": int(width/2 - font.getsize(hilo_string)[0]/2)
+        "font": hilo_font,
+        "top": text_to_display[1]["bottom"] + small_gap*2,
+        "bottom": text_to_display[1]["bottom"] + small_gap*2 + hilo_font.getsize(hilo_string)[1] - 11,
+        "left": int(width/2 - hilo_font.getsize(hilo_string)[0]/2),
+        "size": hilo_font.getsize(hilo_string),
+        "ycorrect": 11
+    }
+)
+
+# weather icon
+icon_size = 80
+weather_font = ImageFont.truetype(weather_font_path, icon_size)
+text_to_display.append(
+    {
+        "text": icon_json['icon'],
+        "font": weather_font,
+        "top": text_to_display[2]["bottom"] + large_gap,
+        "bottom": text_to_display[2]["bottom"] + large_gap - icon_json['y-correct']*icon_size + weather_font.getsize(icon_json['icon'])[1],
+        "left": int(width/2 - weather_font.getsize(icon_json['icon'])[0]/2),
+        "size": (weather_font.getsize(icon_json['icon'])[0], weather_font.getsize(icon_json['icon'])[1] - icon_json['y-correct']*icon_size),
+        "ycorrect": icon_json['y-correct']*icon_size
     }
 )
 
@@ -202,21 +269,38 @@ text_to_display.append(
 # throughout the day
 counter = 3
 for sum in summary_array:
-    text_to_display.append(
-        {
-            "text": sum,
-            "font": summary_font,
-            "top": text_to_display[counter]["bottom"] + line_height,
-            "bottom": text_to_display[counter]["bottom"] + line_height + summary_font.getsize(sum)[1],
-            "left": int(width/2 - summary_font.getsize(sum)[0]/2)
-        }
-    )
+    if counter == 3:
+        text_to_display.append(
+            {
+                "text": sum,
+                "font": summary_font,
+                "top": text_to_display[counter]["bottom"] + large_gap,
+                "bottom": text_to_display[counter]["bottom"] + large_gap + summary_font.getsize(sum)[1] - 11,
+                "left": int(width/2 - summary_font.getsize(sum)[0]/2),
+                "size": summary_font.getsize(sum),
+                "ycorrect": 11
+            }
+        )
+    else:
+        text_to_display.append(
+            {
+                "text": sum,
+                "font": summary_font,
+                "top": text_to_display[counter]["bottom"] + small_gap,
+                "bottom": text_to_display[counter]["bottom"] + small_gap + summary_font.getsize(sum)[1] - 11,
+                "left": int(width/2 - summary_font.getsize(sum)[0]/2),
+                "size": summary_font.getsize(sum),
+                "ycorrect": 11
+            }
+        )
     counter = counter + 1
 
-## draw all the text onto the display
+
 y_start = int(height/2 - text_to_display[-1]['bottom']/2)
+
+## draw all the text onto the display
 for item in text_to_display:
-    draw.text((item['left'], item['top']+y_start), item['text'], text_colour, font = item['font'])
+    draw.text((item['left'], item['top']+y_start-item['ycorrect']), item['text'], text_colour, font = item['font'])
     
 ## Add a last updated line, if requested
 if last_updated_choice == True:
@@ -228,13 +312,18 @@ if last_updated_choice == True:
     draw.text((width - last_updated_size[0], height - last_updated_size[1]),last_updated_text, text_colour,last_updated_font)
 
 ## PASTE THE SMALLER INSIDE IMAGE ONTO THE FULL SCREEN
+
+# box_draw.line(((0,0), (100, 0)), 'black', width=3)
+
 image.paste(d_image, (b_left, b_top))
 
 ## Draw the calibration boxes (to check numbers) onto full screen, if requested
+box_draw = ImageDraw.Draw(image)
 if check_calibration_choice == True:
-    box_draw = ImageDraw.Draw(image)
     box_draw.line(((b_left + width/2, b_top), (b_left+width/2, b_bottom)), 'black', width=3)
     for item in text_to_display:
+        print(y_start)
+        print(item)
         box_draw.line(((b_left, b_top+y_start+item['top']), (b_right, b_top+y_start+item['top'])), 'black', width=1)
         box_draw.line(((b_left, b_top+y_start+item['bottom']), (b_right, b_top+y_start+item['bottom'])), 'black', width=1)
     # weather_point = (weather_point[0]+b_left, weather_point[1]+b_top)
@@ -242,7 +331,7 @@ if check_calibration_choice == True:
     # box_draw.line((weather_point, (weather_point[0]+weather_size[0], weather_point[1])), 'black', width=3)
     # box_draw.line(((weather_point[0]+weather_size[0], weather_point[1]), (weather_point[0]+weather_size[0], weather_point[1]+weather_size[1])), 'black', width=3)
     # box_draw.line(((weather_point[0], weather_point[1]+weather_size[1]), (weather_point[0]+weather_size[0], weather_point[1]+weather_size[1])), 'black', width=3)
-
+if display_outside_bounds_choice == True:
     box_draw.line(((b_left,b_top),(b_left,b_bottom)),'black', width = 3)
     box_draw.line(((b_right,b_top),(b_right,b_bottom)),'black', width = 3)
     box_draw.line(((b_left,b_top),(b_right,b_top)),'black', width = 3)
