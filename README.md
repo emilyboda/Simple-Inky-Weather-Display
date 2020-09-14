@@ -13,12 +13,12 @@ See the image below. The outer box is the actual full display, and the inner box
 
 ## Display Raw Saved Image
 <p align="center">
-<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/raw_image_calibration.png" width="900"><img 
+<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/raw_image_calibration.png" width="400"><img 
 </p>
 
 ## Display In Use
 <p align="center">
-<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/display_in_the_wild.jpg" width="900"><img 
+<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/display_in_the_wild.jpg" width="400"><img 
 </p>
 
 ## Installation Instructions:
@@ -41,7 +41,7 @@ Each small line represents 5 pixels. The text "50" is telling you that the point
 
 **`bottom_edge = 375`**
 <p align="center">
-<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/example_calibration.jpg" width="900"><img 
+<img src="https://github.com/emilyboda/Simple-Inky-Weather-Display/blob/master/example_calibration.jpg" width="400"><img 
 </p>
 
 ## Thanks to:
