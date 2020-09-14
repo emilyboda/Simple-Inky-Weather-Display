@@ -22,6 +22,10 @@ See the image below. The outer box is the actual full display, and the inner box
 </p>
 
 ## Installation Instructions:
+### You will need:
+- [Raspberry Pi Zero](https://www.amazon.com/gp/product/B0748MPQT4/ref=as_li_ss_tl?ie=UTF8&psc=1&linkCode=ll1&tag=nova08-20&linkId=fdde8192b5aa90f4fe858929bb859e76&language=en_US)
+- [7.5" ePaper Screen](https://www.amazon.com/waveshare-7-5inch-HAT-Raspberry-Consumption/dp/B075R4QY3L/ref=as_li_ss_tl?dchild=1&keywords=waveshare+7.5&qid=1600103451&sr=8-1&linkCode=ll1&tag=nova08-20&linkId=999ec0a6b15e20a99789c3f37ad49e07&language=en_US)
+### Installing:
 1. Clone this repo with:
 **`git clone https://github.com/emilyboda/Simple-Inky-Weather-Display simple-weather`**
 2. Follow the instructions in the settings.py file
