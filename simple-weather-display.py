@@ -24,7 +24,7 @@ d_image = Image.new('RGB', (width, height), background_colour) # creating a smal
 draw = ImageDraw.Draw(d_image)
 
 ## DEFINE FONTS
-regular_font_path = '/home/pi/simple-weather/fonts/NotoSansCJK/NotoSansCJKsc-Regular.otf'
+regular_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-Condensed.ttf'
 weather_font_path = '/home/pi/simple-weather/fonts/WeatherFont/weathericons-regular-webfont.ttf'
 font = ImageFont.truetype(regular_font_path, 20)
 
