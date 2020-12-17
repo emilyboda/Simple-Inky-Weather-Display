@@ -28,7 +28,11 @@ See the image below. The outer box is the actual full display, and the inner box
 ### Installing:
 1. Clone this repo with:
 **`git clone https://github.com/emilyboda/Simple-Inky-Weather-Display simple-weather`**
-2. Follow the instructions in the settings.py file
+2. Run the following lines, one-by-one, and then reboot.
+**`sudo raspi-config --expand-rootfs
+sudo sed -i s/#dtparam=spi=on/dtparam=spi=on/ /boot/config.txt
+sudo dpkg-reconfigure tzdata`**
+3. Follow the instructions in the settings.py file
 
 ## Calibration Example
 Each small line represents 5 pixels. The text "50" is telling you that the point (50, 50) is where the two dark lines cross to the top left of the text.
