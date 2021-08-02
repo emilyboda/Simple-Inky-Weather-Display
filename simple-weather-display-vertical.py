@@ -27,7 +27,7 @@ draw = ImageDraw.Draw(d_image)
 ## DEFINE FONTS
 regular_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-Condensed.ttf'
 summary_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-CondensedItalic.ttf'
-hilo_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-CondensedBold.ttf'
+hilo_font_path = '/home/pi/simple-weather/fonts/NotoSans-hinted/NotoSans-Condensed.ttf'
 weather_font_path = '/home/pi/simple-weather/fonts/WeatherFont/weathericons-regular-webfont.ttf'
 font = ImageFont.truetype(regular_font_path, 20)
 
@@ -43,7 +43,8 @@ if debugging_choice_weather == True:
     lo = 68
     hi_time = 1599935700
     lo_time = 1599935700
-    today_summary = "Rain and humid throughout the day."
+    today_summary = "Rain (with a chance of 2-4 in. of snow) starting in the afternoon."
+    #today_summary = "Rain"
     week_summary = "Light rain on Thursday through next Monday."
 else:
     r = requests.get('https://api.darksky.net/forecast/'+dark_sky_api_key+'/'+dark_sky_coords)
@@ -101,12 +102,13 @@ print(font_size)
 # the summary message is frequently too long to fit on one line.
 
 # summary_font = ImageFont.truetype(summary_font_path, font_size)
-summary_font = ImageFont.truetype(regular_font_path, font_size)
-hilo_font = ImageFont.truetype(hilo_font_path, font_size)
+summary_font = ImageFont.truetype(hilo_font_path, font_size)
+hilo_font = ImageFont.truetype(summary_font_path, font_size)
 summary_first_size = summary_font.getsize(summary_string)
 
 # test to see if the width of the summary line is larger than the allowed width.
 if summary_first_size[0] > allowed_width:
+    print('ooh, one line is not enough for the weather description, spilling onto two')
     # if it is, split it into two lines by finding the first space before the middle and the first space after the middle of the string
     summary_find = [
                         summary_string[0:summary_string.find(" ",int(len(summary_string)/2))],
@@ -128,7 +130,40 @@ if summary_first_size[0] > allowed_width:
 else:
     # if it's not longer than the allowed width, we'll keep it on one line
     summary_array = [summary_string]
+    
+if len(summary_array) == 2:
+    if summary_font.getsize(summary_array[0])[0] > allowed_width or summary_font.getsize(summary_array[1])[0] > allowed_width:
+        print('wow, two lines are not enough for the weather description, spilling onto three')
+        summary_find = [
+                            summary_string[0:summary_string.find(" ",int(len(summary_string)/3))],
+                            summary_string[summary_string.find(" ",int(len(summary_string)/3))+1:summary_string.find(" ",int(len(summary_string)/3*2))],
+                            summary_string[summary_string.find(" ",int(len(summary_string)/3*2))+1:len(summary_string)]
+                        ]
+        summary_rfind = [
+                            summary_string[0:summary_string.rfind(" ",0,int(len(summary_string)/3))],
+                            summary_string[summary_string.rfind(" ",0,int(len(summary_string)/3))+1:summary_string.rfind(" ",0,int(len(summary_string)/3*2))],
+                            summary_string[summary_string.rfind(" ",0,int(len(summary_string)/3*2))+1:len(summary_string)]
+                        ]
+        a, b, c = summary_font.getsize(summary_find[0])[0], summary_font.getsize(summary_find[1])[0], summary_font.getsize(summary_find[2])[0]
+        ra, rb, rc = summary_font.getsize(summary_rfind[0])[0], summary_font.getsize(summary_rfind[1])[0], summary_font.getsize(summary_rfind[2])[0]
+        summary_find_diff = (abs(a-b)+abs(b-c)+abs(c-a))/3
+        summary_rfind_diff = (abs(ra-rb)+abs(rb-rc)+abs(rc-ra))/3
+        if summary_find_diff <= summary_rfind_diff:
+            summary_array = summary_find
+        else:
+            summary_array = summary_rfind
+            
+        summary_find_diff = abs(summary_font.getsize(summary_find[0])[0] - summary_font.getsize(summary_find[1])[0])
+        summary_rfind_diff = abs(summary_font.getsize(summary_rfind[0])[0] - summary_font.getsize(summary_rfind[1])[0])
 
+summary_font_size = font_size
+
+for i in summary_array:
+    while summary_font.getsize(i)[0] > allowed_width and summary_font_size != 0:
+        summary_font_size = summary_font_size - 1
+        print("and the font is still too big. making it smaller. font is now", summary_font_size)
+        summary_font = ImageFont.truetype(hilo_font_path, summary_font_size)
+        
 
 ### GET WEATHER ICON ###
 iconmap =   {
@@ -237,19 +272,6 @@ text_to_display.append(
     }
 )
 
-# Hi of 77, low of 68
-text_to_display.append(
-    {
-        "text": hilo_string,
-        "font": hilo_font,
-        "top": text_to_display[1]["bottom"] + small_gap*2,
-        "bottom": text_to_display[1]["bottom"] + small_gap*2 + hilo_font.getsize(hilo_string)[1] - 11,
-        "left": int(width/2 - hilo_font.getsize(hilo_string)[0]/2),
-        "size": hilo_font.getsize(hilo_string),
-        "ycorrect": 11
-    }
-)
-
 # weather icon
 icon_size = 80
 weather_font = ImageFont.truetype(weather_font_path, icon_size)
@@ -257,11 +279,24 @@ text_to_display.append(
     {
         "text": icon_json['icon'],
         "font": weather_font,
-        "top": text_to_display[2]["bottom"] + large_gap,
-        "bottom": text_to_display[2]["bottom"] + large_gap - icon_json['y-correct']*icon_size + weather_font.getsize(icon_json['icon'])[1],
+        "top": text_to_display[1]["bottom"] + large_gap,
+        "bottom": text_to_display[1]["bottom"] + large_gap - icon_json['y-correct']*icon_size + weather_font.getsize(icon_json['icon'])[1],
         "left": int(width/2 - weather_font.getsize(icon_json['icon'])[0]/2),
         "size": (weather_font.getsize(icon_json['icon'])[0], weather_font.getsize(icon_json['icon'])[1] - icon_json['y-correct']*icon_size),
         "ycorrect": icon_json['y-correct']*icon_size
+    }
+)
+
+# Hi of 77, low of 68
+text_to_display.append(
+    {
+        "text": hilo_string,
+        "font": hilo_font,
+        "top": text_to_display[2]["bottom"] + large_gap,
+        "bottom": text_to_display[2]["bottom"] + large_gap + hilo_font.getsize(hilo_string)[1] - 11,
+        "left": int(width/2 - hilo_font.getsize(hilo_string)[0]/2),
+        "size": hilo_font.getsize(hilo_string),
+        "ycorrect": 11
     }
 )
 
@@ -274,8 +309,8 @@ for sum in summary_array:
             {
                 "text": sum,
                 "font": summary_font,
-                "top": text_to_display[counter]["bottom"] + large_gap,
-                "bottom": text_to_display[counter]["bottom"] + large_gap + summary_font.getsize(sum)[1] - 11,
+                "top": text_to_display[counter]["bottom"] + small_gap*1.5,
+                "bottom": text_to_display[counter]["bottom"] + small_gap*1.5 + summary_font.getsize(sum)[1] - 11,
                 "left": int(width/2 - summary_font.getsize(sum)[0]/2),
                 "size": summary_font.getsize(sum),
                 "ycorrect": 11
